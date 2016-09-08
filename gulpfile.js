@@ -2,6 +2,7 @@
 // Myke's Magical PostCSS Gulping. Gulp it down good sonny! Yeah, like that.
 //
 //
+var gulpconfig = require('./gulpconfig.json');
 
 // Includes (all installed via `npm install` which uses package.json)
 var gulp                = require('gulp'),
@@ -20,10 +21,10 @@ gulp.task('css', function () {
 	console.log(' Started '.bgMagenta.white);
 
 	// Watch all .css/.scss files within /src for any changes
-	watch(['src/**/*.css', 'src/**/*.scss'], function(evt) {
+	watch(gulpconfig.watch, function(evt) {
 		// Compile the shizzle from, singularly, src/app.css
 		gulp
-			.src('src/app.css')
+			.src(gulpconfig.src)
 			// Sourcemaps are good for the goose
 			.pipe( sourcemaps.init() )
 			.pipe( postcss([
@@ -47,7 +48,7 @@ gulp.task('css', function () {
 			// Write source .map file after other tinkerings
 			.pipe(sourcemaps.write('.'))
 			// Write .css file
-			.pipe(gulp.dest('build'));
+			.pipe(gulp.dest(gulpconfig.build));
 
 			console.log(' Compiled '.bgGreen.white);
 	});
