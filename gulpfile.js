@@ -3,12 +3,6 @@
 //
 //
 console.log("Starting Gulp..");
-
-var gulpconfig = require('./gulpconfig.json');
-
-console.log("Using config:");
-console.log(gulpconfig);
-
 // Includes (all installed via `npm install` which uses package.json)
 var gulp                = require('gulp'),
 	watch               = require('gulp-watch'),
@@ -19,20 +13,52 @@ var gulp                = require('gulp'),
 	scss                = require('postcss-scss'),
 	cssnano             = require('cssnano'),
 	colors              = require('colors'),
-    lost                = require('lost');
+	lost                = require('lost'),
+	//atImport            = require('postcss-import');
+	cssimport           = require("gulp-cssimport");
 
+var gulpconfig = require('./gulpconfig.json');
+
+echoFill("\n Loaded in:", 'green', 'white', 'bold');
+console.log(process.cwd());
+echoFill("\n Running as if from:", 'green', 'white', 'bold');
+console.log(gulpconfig.from+"\n");
+
+echoFill("\n Config:", 'green', 'white', 'bold');
+console.log(gulpconfig);
+
+// Prepend from value to watch and src etc
+for (var i in gulpconfig.watch) {
+	gulpconfig.watch[i] = gulpconfig.from + gulpconfig.watch[i];
+}
+gulpconfig.src  = gulpconfig.from + gulpconfig.src;
+gulpconfig.dest = gulpconfig.from + gulpconfig.dest;
+echoFill("\n Config Processed:", 'blue', 'white', 'bold');
+console.log(gulpconfig);
 
 gulp.task('css', function () {
 	console.log(' Started '.bgMagenta.white);
-
+	console.log(gulpconfig.watch);
 	// Watch all .css/.scss files within /src for any changes
 	watch(gulpconfig.watch, function(evt) {
+		echoFill("\n Event..", 'blue', 'white', 'bold');
+
 		// Compile the shizzle from, singularly, src/app.css
 		gulp
 			.src(gulpconfig.src)
+			// @import parse through the src (at least?)
+			.pipe(cssimport())
 			// Sourcemaps are good for the goose
 			.pipe( sourcemaps.init() )
 			.pipe( postcss([
+				// Import comes with postcss-scss BUT would run after all the other processors
+				// Which is retarded because like, lost grids wouldn't work in imported files
+				/*
+				atImport({
+					from: [gulpconfig.from]
+				}),
+				*/
+
 				// Strip inline comments as they're invalid
 				stripInlineComments(),
 
@@ -55,7 +81,9 @@ gulp.task('css', function () {
 			// Write .css file
 			.pipe(gulp.dest(gulpconfig.dest));
 
-			console.log(' Compiled '.bgGreen.white);
+			// No idea what happens to the console just before this
+			// but it puts an extra newline after somehow
+			echoFill(" Compiled", 'green', 'white', 'bold');
 	});
 	return;
 });
@@ -112,7 +140,9 @@ function echoFill(string, bg, fg, bold) {
 	if (fg == 'grey')   string = string.grey;
 	if (bg == 'red')    string = string.bgRed;
 	if (bg == 'green')  string = string.bgGreen;
+	if (bg == 'blue')  string = string.bgBlue;
 	if (bold) string = string.bold;
 
 	process.stdout.write(string);
+	process.stdout.write("\n");
 }

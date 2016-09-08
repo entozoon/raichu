@@ -1,8 +1,9 @@
 {
+	"from": "../../../",
 	"watch": [
-		"../../../src/**/*.css",
-		"../../../src/**/*.scss"
+		"src/**/*.css",
+		"src/**/*.scss"
 	],
-	"src": "../../../src/app.css",
-	"dest": "../../../build"
+	"src": "src/app.css",
+	"dest": "build"
 }
