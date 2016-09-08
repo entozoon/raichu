@@ -53,7 +53,7 @@ gulp.task('css', function () {
 			// Write source .map file after other tinkerings
 			.pipe(sourcemaps.write('.'))
 			// Write .css file
-			.pipe(gulp.dest(gulpconfig.build));
+			.pipe(gulp.dest(gulpconfig.dest));
 
 			console.log(' Compiled '.bgGreen.white);
 	});
