@@ -1,5 +1,5 @@
 {
-  "name": "raichu gulp",
+  "name": "raichu",
   "description": "postCSS Gulp",
   "main": "gulpfile.js",
   "authors": [
