@@ -5,7 +5,7 @@ echo Also: It uses the ../../ folder's name for the assumed project.dev url
 echo       I know it's a bit much, but feel free to change it if not useful to you.
 echo.
 
-cd ../..
+cd ../../../
 
 REM Get current folder name
 for %%* in (.) do set folderName=%%~nx*
