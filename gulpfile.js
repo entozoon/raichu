@@ -2,7 +2,12 @@
 // Myke's Magical PostCSS Gulping. Gulp it down good sonny! Yeah, like that.
 //
 //
+console.log("Starting Gulp..");
+
 var gulpconfig = require('./gulpconfig.json');
+
+console.log("Using config:");
+console.log(gulpconfig);
 
 // Includes (all installed via `npm install` which uses package.json)
 var gulp                = require('gulp'),
