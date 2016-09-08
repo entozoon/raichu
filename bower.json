@@ -1,0 +1,10 @@
+{
+  "name": "raichu gulp",
+  "description": "postCSS Gulp",
+  "main": "gulpfile.js",
+  "authors": [
+    "MichaelCook entozoon@gmail.com"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/entozoon/raichu"
+}
