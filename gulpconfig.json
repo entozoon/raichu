@@ -1,9 +1,19 @@
 {
-	"from": "../../../",
-	"watch": [
-		"src/**/*.css",
-		"src/**/*.scss"
-	],
-	"src": "src/app.css",
-	"dest": "build"
+	"css": {
+		"from": "../../../",
+		"watch": [
+			"src/scss/**/*.css",
+			"src/scss/**/*.scss"
+		],
+		"src": "src/scss/app.css",
+		"dest": "build"
+	},
+	"js": {
+		"from": "../../../",
+		"watch": [
+			"src/js/**/*.js"
+		],
+		"src": "src/js/app.js",
+		"dest": "build"
+	}
 }

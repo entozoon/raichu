@@ -15,37 +15,52 @@ var gulp                = require('gulp'),
 	colors              = require('colors'),
 	lost                = require('lost'),
 	//atImport            = require('postcss-import');
-	cssimport           = require("gulp-cssimport");
+	cssimport           = require('gulp-cssimport'),
+	filter              = require('gulp-filter'),
+	debug               = require('gulp-debug'),
+	//concat              = require('gulp-concat'),
+	uglify              = require('gulp-uglify'),
+	size                = require('gulp-size');
 
 var gulpconfig = require('./gulpconfig.json');
 
 echoFill("\n Loaded in:", 'green', 'white', 'bold');
 console.log(process.cwd());
 echoFill("\n Running as if from:", 'green', 'white', 'bold');
-console.log(gulpconfig.from+"\n");
+console.log(gulpconfig.css.from+"\n");
 
 echoFill("\n Config:", 'green', 'white', 'bold');
 console.log(gulpconfig);
 
+
+
 // Prepend from value to watch and src etc
-for (var i in gulpconfig.watch) {
-	gulpconfig.watch[i] = gulpconfig.from + gulpconfig.watch[i];
+for (var i in gulpconfig.css.watch) {
+	gulpconfig.css.watch[i] = gulpconfig.css.from + gulpconfig.css.watch[i];
 }
-gulpconfig.src  = gulpconfig.from + gulpconfig.src;
-gulpconfig.dest = gulpconfig.from + gulpconfig.dest;
+gulpconfig.css.src  = gulpconfig.css.from + gulpconfig.css.src;
+gulpconfig.css.dest = gulpconfig.css.from + gulpconfig.css.dest;
+gulpconfig.js.src   = gulpconfig.js.from  + gulpconfig.js.src;
+gulpconfig.js.dest  = gulpconfig.js.from  + gulpconfig.js.dest;
+// this might need iterating as above
+gulpconfig.js.watch = gulpconfig.js.from  + gulpconfig.js.watch;
+// In fact, this whole block needs a beasty function for everything.
+
+
+
 echoFill("\n Config Processed:", 'blue', 'white', 'bold');
 console.log(gulpconfig);
 
 gulp.task('css', function () {
-	console.log(' Started '.bgMagenta.white);
-	console.log(gulpconfig.watch);
-	// Watch all .css/.scss files within /src for any changes
-	watch(gulpconfig.watch, function(evt) {
+	console.log(' CSS watch is begun  '.bgMagenta.white);
+	console.log(gulpconfig.css.watch);
+	// Watch files within watch dir
+	watch(gulpconfig.css.watch, function(evt) {
 		echoFill("\n Event..", 'blue', 'white', 'bold');
 
-		// Compile the shizzle from, singularly, src/app.css
+		// Compile the shizzle from, singularly, file specified by src
 		gulp
-			.src(gulpconfig.src)
+			.src(gulpconfig.css.src)
 			// @import parse through the src (at least?)
 			.pipe(cssimport())
 			// Sourcemaps are good for the goose
@@ -55,7 +70,7 @@ gulp.task('css', function () {
 				// Which is retarded because like, lost grids wouldn't work in imported files
 				/*
 				atImport({
-					from: [gulpconfig.from]
+					from: [gulpconfig.css.from]
 				}),
 				*/
 
@@ -79,7 +94,7 @@ gulp.task('css', function () {
 			// Write source .map file after other tinkerings
 			.pipe(sourcemaps.write('.'))
 			// Write .css file
-			.pipe(gulp.dest(gulpconfig.dest));
+			.pipe(gulp.dest(gulpconfig.css.dest));
 
 			// No idea what happens to the console just before this
 			// but it puts an extra newline after somehow
@@ -89,8 +104,36 @@ gulp.task('css', function () {
 });
 
 
+gulp.task('js', function() {
+	console.log(' JS watcher is on the wall '.bgMagenta.white);
+	console.log(gulpconfig.js.watch);
+	// Watch files within watch dir
+	watch(gulpconfig.js.watch, function(evt) {
+		echoFill("\n Event..", 'blue', 'white', 'bold');
+
+		// Compile the shizzle from, singularly, file specified by src
+		gulp
+			.src(gulpconfig.js.src)
+			//.pipe(filter('*.js'))
+			.pipe(debug({title:'Compiling'})) // output files that are compiling
+			//.pipe(concat(gulpconfig.js.dest.filename))
+			.pipe(uglify())
+			.on('error', function(error) { errorOutput(error); })
+
+			.pipe(size({showFiles:true,title:'Output'}))
+
+			// Write .js file
+			.pipe(gulp.dest(gulpconfig.js.dest));
+
+			// No idea what happens to the console just before this
+			// but it puts an extra newline after somehow
+			echoFill(" Compiled", 'green', 'white', 'bold');
+	});
+	return;
+});
+
 // Set default task(s) running
-gulp.task('default', ['css']);
+gulp.task('default', ['css', 'js']);
 
 
 function errorOutput(error) {
@@ -144,5 +187,5 @@ function echoFill(string, bg, fg, bold) {
 	if (bold) string = string.bold;
 
 	process.stdout.write(string);
-	process.stdout.write("\n");
+	//process.stdout.write("\n");
 }
