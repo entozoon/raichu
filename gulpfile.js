@@ -56,7 +56,7 @@ gulp.task('css', function () {
 	console.log(gulpconfig.css.watch);
 	// Watch files within watch dir
 	watch(gulpconfig.css.watch, function(evt) {
-		echoFill("\n Event..", 'blue', 'white', 'bold');
+		echoFill(" Event..", 'blue', 'white', 'bold');
 
 		// Compile the shizzle from, singularly, file specified by src
 		gulp
